@@ -19,12 +19,12 @@ assignees: ''
 - ~없으면, 예외가 발생한다.
 
 Request Body
-json```
+```json
 여기다 작성해주세요
 ```
 
 Response Body
-json```
+```json
 여기다 작성해주세요
 ```
 
