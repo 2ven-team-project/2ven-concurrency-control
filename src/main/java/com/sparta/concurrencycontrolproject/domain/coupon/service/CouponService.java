@@ -86,4 +86,15 @@ public class CouponService {
 
         return new CouponResponseDto(coupon);
     }
+
+    public Page<CouponResponseDto> getMyCoupon(UserDetailsImpl authMember, int page, int size) {
+        Member member = memberRepository.findById(authMember.getUser().getId())
+            .orElseThrow(() -> new InvalidRequestStateException("존재하는 멤버가 아닙니다"));
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<CouponResponseDto> myCoupons = couponRepository.findByMember(member, pageable);
+
+        return myCoupons;
+    }
 }
