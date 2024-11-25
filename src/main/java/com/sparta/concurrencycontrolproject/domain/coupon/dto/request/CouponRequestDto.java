@@ -5,9 +5,8 @@ import lombok.Getter;
 @Getter
 public class CouponRequestDto {
 
-    String couponName;
-    int count;
-    int discount;
-
+    private String couponName;
+    private int count;
+    private int discount;
 
 }
