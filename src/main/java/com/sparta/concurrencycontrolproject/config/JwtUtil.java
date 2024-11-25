@@ -1,10 +1,17 @@
-
 package com.sparta.concurrencycontrolproject.config;
 
 import com.sparta.concurrencycontrolproject.domain.member.entity.MemberRole;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,16 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private static final long TOKEN_TIME = 6000 * 60 * 1000L; // 60분
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     @Value("${jwt.secret.key}")
@@ -39,14 +42,14 @@ public class JwtUtil {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(String.valueOf(userId))
-                        .claim("email", email)
-                        .claim("userRole", userRole)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+            Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .claim("email", email)
+                .claim("userRole", userRole)
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setIssuedAt(date) // 발급일
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
     }
 
     public String substringToken(String tokenValue) {
@@ -58,10 +61,10 @@ public class JwtUtil {
 
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
     }
 
     // 토큰 검증
