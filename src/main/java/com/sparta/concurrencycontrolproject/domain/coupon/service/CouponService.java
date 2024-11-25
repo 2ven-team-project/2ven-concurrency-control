@@ -59,7 +59,7 @@ public class CouponService {
     }
 
     @Transactional
-    public String issueCoupon(Long couponId, UserDetailsImpl authMember) {
+    public CouponResponseDto issueCoupon(Long couponId, UserDetailsImpl authMember) {
 
         Member member = memberRepository.findById(authMember.getUser().getId())
             .orElseThrow(() -> new InvalidRequestStateException("존재하는 멤버가 아닙니다"));
@@ -84,6 +84,6 @@ public class CouponService {
         coupon.setCount(coupon.getCount() - 1);
         coupon.update(coupon);
 
-        return "발급 완료";
+        return new CouponResponseDto(coupon);
     }
 }

@@ -40,9 +40,9 @@ public class CouponController {
     }
 
     @PostMapping("/{couponId}")
-    public String issueCoupon(@PathVariable Long couponId
+    public ResponseEntity<CouponResponseDto> issueCoupon(@PathVariable Long couponId
         , @AuthenticationPrincipal UserDetailsImpl authMember) {
-        return couponService.issueCoupon(couponId, authMember);
+        return ResponseEntity.ok(couponService.issueCoupon(couponId, authMember));
     }
 
 }
