@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -24,6 +25,7 @@ public class Coupon {
     private String couponName;
 
     @Column
+    @Setter
     private int count;
 
     @Column
@@ -37,5 +39,9 @@ public class Coupon {
         this.discount = discount;
     }
 
-
+    public void update(Coupon coupon) {
+        this.couponName = coupon.getCouponName();
+        this.count = coupon.getCount();
+        this.discount = coupon.getDiscount();
+    }
 }

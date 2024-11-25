@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,12 @@ public class CouponController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(couponService.getCoupon(page, size));
+    }
+
+    @PostMapping("/{couponId}")
+    public ResponseEntity<CouponResponseDto> issueCoupon(@PathVariable Long couponId
+        , @AuthenticationPrincipal UserDetailsImpl authMember) {
+        return ResponseEntity.ok(couponService.issueCoupon(couponId, authMember));
     }
 
 }
