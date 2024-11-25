@@ -50,4 +50,12 @@ public class Member extends Timestamped {
 	public static Member fromAuthMember(AuthMember authUser) {
 		return new Member(authUser.getId(), authUser.getEmail(), authUser.getUserRole());
 	}
+
+	public void changePassword(String password) {
+		this.password = password;
+	}
+
+	public void updateRole(MemberRole memberRole) {
+		this.role = memberRole;
+	}
 }
