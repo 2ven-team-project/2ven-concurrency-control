@@ -3,20 +3,28 @@ package com.sparta.concurrencycontrolproject.domain.coupon.service;
 import com.sparta.concurrencycontrolproject.domain.coupon.dto.request.CouponRequestDto;
 import com.sparta.concurrencycontrolproject.domain.coupon.dto.response.CouponResponseDto;
 import com.sparta.concurrencycontrolproject.domain.coupon.entity.Coupon;
+import com.sparta.concurrencycontrolproject.domain.coupon.entity.Issuance;
 import com.sparta.concurrencycontrolproject.domain.coupon.repository.CouponRepository;
+import com.sparta.concurrencycontrolproject.domain.coupon.repository.IssuanceRepository;
+import com.sparta.concurrencycontrolproject.domain.member.entity.Member;
 import com.sparta.concurrencycontrolproject.domain.member.entity.MemberRole;
+import com.sparta.concurrencycontrolproject.domain.member.repository.MemberRepository;
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final IssuanceRepository issuanceRepository;
+    private final MemberRepository memberRepository;
 
     public CouponResponseDto createCoupon(CouponRequestDto requestDto,
         UserDetailsImpl authMember) {
@@ -48,5 +56,34 @@ public class CouponService {
             coupon.getCount(),
             coupon.getDiscount()
         ));
+    }
+
+    @Transactional
+    public String issueCoupon(Long couponId, UserDetailsImpl authMember) {
+
+        Member member = memberRepository.findById(authMember.getUser().getId())
+            .orElseThrow(() -> new InvalidRequestStateException("존재하는 멤버가 아닙니다"));
+        Coupon coupon = couponRepository.findById(couponId)
+            .orElseThrow(() -> new InvalidRequestStateException("존재하는 쿠폰이 아닙니다"));
+
+        Issuance check = issuanceRepository.findByCouponAndMember(coupon, member);
+
+        if (check != null) {
+            throw new InvalidRequestStateException("발급받은 쿠폰입니다.");
+        }
+        if (coupon.getCount() <= 0) {
+            throw new InvalidRequestStateException("쿠폰이 다 소진되었습니다.");
+        }
+
+        Issuance issuance = Issuance.builder()
+            .coupon(coupon)
+            .member(member)
+            .build();
+        issuanceRepository.save(issuance);
+
+        coupon.setCount(coupon.getCount() - 1);
+        coupon.update(coupon);
+
+        return "발급 완료";
     }
 }
