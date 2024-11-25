@@ -30,6 +30,8 @@ public class Seat {
 
 	private boolean isBooked;
 
+	private String bookedBy;
+
 	public Seat(Concert concert, String seatNumber) {
 		if(concert == null) {
 			throw new IllegalArgumentException("공연을 찾을 수 없습니다.");
@@ -39,11 +41,12 @@ public class Seat {
 	}
 
 	//좌석 예약시
-	public void book() {
+	public void book(String userName) {
 		if (isBooked) {
 			throw new IllegalStateException("이미 예약된 좌석입니다.");
 		}
 		this.isBooked = true;
+		this.bookedBy = userName;
 	}
 
 	//좌석 예약 취소시
@@ -52,6 +55,7 @@ public class Seat {
 			throw new IllegalArgumentException("이용 가능한 좌석입니다.");
 		}
 		this.isBooked = false;
+		this.bookedBy = null;
 	}
 
 }

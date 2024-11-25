@@ -35,6 +35,17 @@ public class TicketService {
 			.collect(Collectors.toList());
 	}
 
+	@Transactional
+	public void selectSeat(Long concertId, String seatNumber, String name) {
+		Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatNumber)
+			.orElseThrow(() -> new IllegalArgumentException("공연 또는 좌석이 유효하지 않습니다."));
+
+		if (seat.isBooked()) {
+			throw new IllegalStateException("좌석이 이미 예약되었습니다.");
+		}
+		seat.book(name);
+		seatRepository.save(seat);
+	}
 
 	@Transactional
 	public Ticket bookSeat(Long memberId, Long concertId, String seatNumber) {
@@ -51,11 +62,9 @@ public class TicketService {
 			throw new IllegalArgumentException("좌석이 이미 예약처리 중 입니다.");
 		}
 
-		seat.book();
+		seat.book(member.getName());
 
 		Ticket ticket = new Ticket(member, concert, seatNumber);
 		return ticketRepository.save(ticket);
 	}
-
-
 }
