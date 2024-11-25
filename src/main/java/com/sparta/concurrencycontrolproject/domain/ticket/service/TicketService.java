@@ -3,8 +3,6 @@ package com.sparta.concurrencycontrolproject.domain.ticket.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
-import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
