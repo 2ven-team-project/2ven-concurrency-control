@@ -50,12 +50,7 @@ public class CouponService {
 
         Page<Coupon> coupons = couponRepository.findAll(pageable);
 
-        return coupons.map(coupon -> new CouponResponseDto(
-            coupon.getId(),
-            coupon.getCouponName(),
-            coupon.getCount(),
-            coupon.getDiscount()
-        ));
+        return coupons.map(CouponResponseDto::new);
     }
 
     @Transactional
