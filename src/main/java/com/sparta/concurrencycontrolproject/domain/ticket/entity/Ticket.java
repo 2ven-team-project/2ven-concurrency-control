@@ -1,6 +1,9 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.entity;
 
+import java.time.LocalDateTime;
+
 import com.sparta.concurrencycontrolproject.domain.common.entity.Timestamped;
+import com.sparta.concurrencycontrolproject.domain.concert.entity.Concert;
 import com.sparta.concurrencycontrolproject.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
@@ -28,11 +31,16 @@ public class Ticket extends Timestamped {
 	private Member member;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ticket_id")
-	private Ticket ticket;
+	@JoinColumn(name = "concert_id")
+	private Concert concert;
 
-	public Ticket(Member member, Ticket ticket) {
+	private String seatNumber;
+	private LocalDateTime date;
+
+	public Ticket(Member member, Concert concert, String seatNumber, LocalDateTime date) {
 		this.member = member;
-		this.ticket = ticket;
+		this.concert = concert;
+		this.seatNumber = seatNumber;
+		this.date = date;
 	}
 }
