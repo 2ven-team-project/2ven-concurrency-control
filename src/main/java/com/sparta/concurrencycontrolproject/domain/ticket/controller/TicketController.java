@@ -4,12 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.SeatSelectionRequest;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
@@ -38,4 +33,13 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 		ticketService.selectSeat(concertId, request.getSeatNumber(), authUser.getUser().getName());
 		return ResponseEntity.ok("좌석 선택 완료!");
 	}
+
+	@DeleteMapping("/concerts/{concertId}/tickets/{ticketId}")
+	public ResponseEntity<String> deleteTicket(@AuthenticationPrincipal UserDetailsImpl authMember,
+											   @PathVariable Long ticketId, @PathVariable Long concertId) {
+		ticketService.deleteTicket(authMember, ticketId, concertId);
+		return ResponseEntity.ok("삭제 되었습니다.");
+	}
+
+
 }
