@@ -1,21 +1,14 @@
 package com.sparta.concurrencycontrolproject.domain.member.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.sparta.concurrencycontrolproject.domain.auth.dto.AuthMember;
 import com.sparta.concurrencycontrolproject.domain.common.entity.Timestamped;
 import com.sparta.concurrencycontrolproject.domain.ticket.entity.Ticket;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -46,5 +39,15 @@ public class Member extends Timestamped {
 		this.name = name;
 		this.password = password;
 		this.role = role;
+	}
+
+	private Member(Long id, String email, MemberRole memberRole) {
+		this.id = id;
+		this.email = email;
+		this.role = memberRole;
+	}
+
+	public static Member fromAuthMember(AuthMember authUser) {
+		return new Member(authUser.getId(), authUser.getEmail(), authUser.getUserRole());
 	}
 }
