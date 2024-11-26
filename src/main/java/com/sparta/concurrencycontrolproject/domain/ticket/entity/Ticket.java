@@ -52,4 +52,6 @@ public class Ticket extends Timestamped {
 		}
 		this.isCancelled = true;  // 취소 상태로 변경
 	}
+
+
 }
