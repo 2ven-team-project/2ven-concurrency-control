@@ -45,4 +45,12 @@ public class CouponController {
         return ResponseEntity.ok(couponService.issueCoupon(couponId, authMember));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<Page<CouponResponseDto>> getMyCoupon(
+        @AuthenticationPrincipal UserDetailsImpl authMember,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(couponService.getMyCoupon(authMember, page, size));
+    }
+
 }
