@@ -49,9 +49,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        Long userId = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getId();
-        String email = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getEmail();
-        MemberRole role = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getRole();
+        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getId();
+        String email = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getEmail();
+        MemberRole role = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getRole();
 
         String token = jwtUtil.createToken(userId,email,role);
         response.setHeader("Authorization", token);
