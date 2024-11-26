@@ -36,7 +36,7 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	@PostMapping("/{concertId}/seats/select")
 	public ResponseEntity<String> selectSeat(@PathVariable Long concertId, @RequestBody SeatSelectionRequest request,
 		@AuthenticationPrincipal UserDetailsImpl authUser) {
-		ticketService.selectSeat(concertId, request.getSeatNumber(), authUser.getUser().getName());
+		ticketService.selectSeat(concertId, request.getSeatNumber(), authUser.getMember().getName());
 		return ResponseEntity.ok("좌석 선택 완료!");
 	}
 
@@ -44,7 +44,7 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	@PostMapping("/{concertId}/ticketing")
 	public ResponseEntity<TicketResponse> createTicket(@PathVariable Long concertId, @RequestBody TicketingRequest request,
 		@AuthenticationPrincipal UserDetailsImpl authUser) {
-		TicketResponse ticketResponse = ticketService.createTicket(concertId, request, authUser.getUser().getName());
+		TicketResponse ticketResponse = ticketService.createTicket(concertId, request, authUser.getMember().getName());
 		return ResponseEntity.ok(ticketResponse);
 	}
 

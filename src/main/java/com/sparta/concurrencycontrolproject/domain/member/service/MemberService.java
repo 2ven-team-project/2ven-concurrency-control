@@ -52,9 +52,9 @@ public class MemberService {
     }
 
     public MemberDeleteResponse deleteMember(MemberDeleteRequest memberDeleteRequest, Long memberId, UserDetailsImpl authMember) {
-        Member member = memberRepository.findByEmail(authMember.getUser().getEmail()).orElseThrow(
+        Member member = memberRepository.findByEmail(authMember.getMember().getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("User not found"));
-        if(!member.getId().equals(memberId) || !authMember.getUser().getId().equals(memberId)) {
+        if(!member.getId().equals(memberId) || !authMember.getMember().getId().equals(memberId)) {
             throw new IllegalArgumentException("User not found");
         }
         if(!member.getPassword().equals(passwordEncoder.encode(memberDeleteRequest.getPassword()))) {

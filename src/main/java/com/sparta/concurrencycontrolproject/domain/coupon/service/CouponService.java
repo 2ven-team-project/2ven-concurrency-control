@@ -29,9 +29,9 @@ public class CouponService {
     public CouponResponseDto createCoupon(CouponRequestDto requestDto,
         UserDetailsImpl authMember) {
 
-        System.out.println(authMember.getUser().getRole());
+        System.out.println(authMember.getMember().getRole());
 
-        if (authMember.getUser().getRole() != MemberRole.ADMIN) {
+        if (authMember.getMember().getRole() != MemberRole.ADMIN) {
             throw new IllegalArgumentException("관리자가 아닙니다.");
         }
         Coupon coupon = Coupon.builder()
@@ -56,7 +56,7 @@ public class CouponService {
     @Transactional
     public CouponResponseDto issueCoupon(Long couponId, UserDetailsImpl authMember) {
 
-        Member member = memberRepository.findById(authMember.getUser().getId())
+        Member member = memberRepository.findById(authMember.getMember().getId())
             .orElseThrow(() -> new InvalidRequestStateException("존재하는 멤버가 아닙니다"));
         Coupon coupon = couponRepository.findById(couponId)
             .orElseThrow(() -> new InvalidRequestStateException("존재하는 쿠폰이 아닙니다"));
@@ -83,7 +83,7 @@ public class CouponService {
     }
 
     public Page<CouponResponseDto> getMyCoupon(UserDetailsImpl authMember, int page, int size) {
-        Member member = memberRepository.findById(authMember.getUser().getId())
+        Member member = memberRepository.findById(authMember.getMember().getId())
             .orElseThrow(() -> new InvalidRequestStateException("존재하는 멤버가 아닙니다"));
 
         Pageable pageable = PageRequest.of(page - 1, size);
