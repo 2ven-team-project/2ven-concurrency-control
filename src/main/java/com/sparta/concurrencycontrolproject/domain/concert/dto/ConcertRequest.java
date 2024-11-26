@@ -1,12 +1,16 @@
 package com.sparta.concurrencycontrolproject.domain.concert.dto;
 
-public class ConcertRequest {
-    private String name;
-    private String price;
-    private String image;
-    private String description;
-    private String date;
-    private int seating;
+import lombok.Getter;
 
-    // Getters and Setters
+import java.time.LocalDateTime;
+
+@Getter
+public class ConcertRequest {
+    private String concertName;
+    private int price;
+    private String description;
+    private String image;
+    private LocalDateTime date;
+    private LocalDateTime startAt;
+    private int seating; // 좌석 수
 }
