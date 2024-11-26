@@ -3,6 +3,8 @@ package com.sparta.concurrencycontrolproject.domain.ticket.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,9 +73,9 @@ public class TicketService {
 	@Transactional
 	public void deleteTicket(UserDetailsImpl authMember, Long ticketId, Long concertId) {
 		Member member = memberRepository.findById(authMember.getUser().getId())
-				.orElseThrow(() -> new InvalidRequestStateException("유효하지 않은 사용자 입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 입니다."));
 		Concert concert = concertRepository.findById(concertId)
-				.orElseThrow(() -> new InvalidRequestStateException("유효하지 않은 공연 입니다."));
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 공연 입니다."));
 		Ticket ticket = ticketRepository.findById(ticketId)
 				.orElseThrow(() -> new IllegalArgumentException("유효하지 않는 티켓입니다."));
 
