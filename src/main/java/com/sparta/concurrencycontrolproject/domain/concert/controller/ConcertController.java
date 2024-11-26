@@ -10,6 +10,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/concerts")
 public class ConcertController {
@@ -33,7 +35,6 @@ public class ConcertController {
         // 공연 등록 로직 실행
         ConcertResponse response = concertService.registerConcert(request);
         return ResponseEntity.ok(response);
-
     }
 
     @PutMapping("/{concertId}")
@@ -52,5 +53,10 @@ public class ConcertController {
         return ResponseEntity.ok(response);
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<ConcertResponse>> getAllConcerts() {
+        // 공연 전체 조회 로직 실행
+        List<ConcertResponse> concerts = concertService.getAllConcerts();
+        return ResponseEntity.ok(concerts);
+    }
 }
