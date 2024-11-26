@@ -8,6 +8,10 @@ import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketRes
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 import com.sun.jdi.request.InvalidRequestStateException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,4 +102,18 @@ public class TicketService {
 		ticket.cancel();
 		ticketRepository.save(ticket);
 	}
+
+	@Transactional(readOnly = true)
+	public Page<TicketResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
+		Pageable pageable = PageRequest.of(page - 1, size);
+
+		Page<Ticket> tickets = ticketRepository.findByMemberId(authMember, pageable);
+
+		return tickets.map(ticket -> new TicketResponse(
+				ticket.getConcert().getConcertName(),
+				ticket.getSeatNumber(),
+				ticket.getDate()
+		));
+	}
+
 }

@@ -1,7 +1,11 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +54,15 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 		@PathVariable Long ticketId, @PathVariable Long concertId) {
 		ticketService.deleteTicket(authMember, ticketId, concertId);
 		return ResponseEntity.ok("삭제 되었습니다.");
+	}
+
+	@GetMapping("/tickets")
+	public ResponseEntity<Page<TicketResponse>> getTickets(
+			@AuthenticationPrincipal UserDetailsImpl authMember,
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size
+	) {
+		return ResponseEntity.ok(ticketService.getAllTickets(authMember,page, size));
 	}
 
 }
