@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ConcertService {
 
-    private final ConcertRepository concertRepository; // Lombok이 생성자를 자동 생성
+    private final ConcertRepository concertRepository;
 
     // 공연 등록
     public ConcertResponse registerConcert(ConcertRequest request) {

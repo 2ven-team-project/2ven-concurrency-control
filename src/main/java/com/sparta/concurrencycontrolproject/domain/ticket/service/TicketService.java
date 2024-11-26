@@ -85,7 +85,7 @@ public class TicketService {
 
 	@Transactional
 	public void deleteTicket(UserDetailsImpl authMember, Long ticketId, Long concertId) {
-		Member member = memberRepository.findById(authMember.getUser().getId())
+		Member member = memberRepository.findById(authMember.getMember().getId())
 			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 입니다."));
 		Concert concert = concertRepository.findById(concertId)
 			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 공연 입니다."));
