@@ -44,7 +44,5 @@ public class Ticket extends Timestamped {
 		this.date = date;
 	}
 
-    public Ticket(Member member, Concert concert, String seatNumber) {
-        super();
-    }
+
 }

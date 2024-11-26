@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity // Spring Security 지원 활성화
+@EnableWebSecurity // Spring Security 지원을 가능하게 함
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
@@ -51,21 +51,20 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()); // CSRF 비활성화
+        http.csrf((csrf) -> csrf.disable());
 
-        http.sessionManagement(sessionManagement ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 사용하지 않음
+        http.sessionManagement((sessionManagement) ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        http.authorizeHttpRequests(authorizeHttpRequests ->
+        http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적 리소스 접근 허용
-                        .requestMatchers("/auth/signup/**").permitAll() // 회원가입 API 접근 허용
-                        .requestMatchers("/concerts/**").hasRole("ADMIN") // ADMIN 권한만 /concerts/** 접근 허용
-                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                        .requestMatchers("/auth/signup/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
-        // 필터 설정
+        // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
