@@ -39,4 +39,8 @@ public class Coupon {
         this.count = coupon.getCount();
         this.discount = coupon.getDiscount();
     }
+
+    public void updateCount(int i) {
+        this.count = i;
+    }
 }
