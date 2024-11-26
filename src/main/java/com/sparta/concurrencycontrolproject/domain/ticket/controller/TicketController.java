@@ -3,6 +3,7 @@ package com.sparta.concurrencycontrolproject.domain.ticket.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketDetailResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -57,12 +58,19 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	}
 
 	@GetMapping("/tickets")
-	public ResponseEntity<Page<TicketResponse>> getTickets(
+	public ResponseEntity<Page<TicketDetailResponse>> getTickets(
 			@AuthenticationPrincipal UserDetailsImpl authMember,
 			@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "10") int size
 	) {
 		return ResponseEntity.ok(ticketService.getAllTickets(authMember,page, size));
 	}
+
+	@GetMapping("/tickets/{ticketId}")
+	public ResponseEntity<TicketDetailResponse> getTicket(
+			@AuthenticationPrincipal UserDetailsImpl authMember, @PathVariable Long ticketId) {
+		return ResponseEntity.ok(ticketService.getTickets(authMember, ticketId));
+	}
+
 
 }
