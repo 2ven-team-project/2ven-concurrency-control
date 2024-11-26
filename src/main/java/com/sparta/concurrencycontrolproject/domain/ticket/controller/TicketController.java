@@ -56,7 +56,7 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 		return ResponseEntity.ok("삭제 되었습니다.");
 	}
 
-	@GetMapping("/todos")
+	@GetMapping("/tickets")
 	public ResponseEntity<Page<TicketResponse>> getTickets(
 			@AuthenticationPrincipal UserDetailsImpl authMember,
 			@RequestParam(defaultValue = "1") int page,
