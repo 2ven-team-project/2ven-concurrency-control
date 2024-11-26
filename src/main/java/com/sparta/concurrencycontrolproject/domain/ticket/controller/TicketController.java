@@ -1,17 +1,15 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.SeatSelectionRequest;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.service.TicketService;
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 
@@ -38,19 +36,20 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 		return ResponseEntity.ok("좌석 선택 완료!");
 	}
 
-	@DeleteMapping("/concerts/{concertId}/tickets/{ticketId}")
+	//예매 완료
+	@PostMapping("/{concertId}/ticketing")
+	public ResponseEntity<TicketResponse> createTicket(@PathVariable Long concertId, @RequestBody TicketingRequest request,
+		@AuthenticationPrincipal UserDetailsImpl authUser) {
+		TicketResponse ticketResponse = ticketService.createTicket(concertId, request, authUser.getUser().getName());
+		return ResponseEntity.ok(ticketResponse);
+	}
+
+	//예매 취소(의정님 부분을 장민우가 약간 수정함)
+	@DeleteMapping("/{concertId}/tickets/{ticketId}")
 	public ResponseEntity<String> deleteTicket(@AuthenticationPrincipal UserDetailsImpl authMember,
-											   @PathVariable Long ticketId, @PathVariable Long concertId) {
+		@PathVariable Long ticketId, @PathVariable Long concertId) {
 		ticketService.deleteTicket(authMember, ticketId, concertId);
 		return ResponseEntity.ok("삭제 되었습니다.");
 	}
 
-	@GetMapping("/todos")
-	public ResponseEntity<Page<TicketResponse>> getTickets(
-			@AuthenticationPrincipal UserDetailsImpl authMember,
-			@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size
-	) {
-		return ResponseEntity.ok(ticketService.getAllTickets(authMember,page, size));
-	}
 }
