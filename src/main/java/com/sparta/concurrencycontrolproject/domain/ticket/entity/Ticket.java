@@ -36,11 +36,20 @@ public class Ticket extends Timestamped {
 
 	private String seatNumber;
 	private LocalDateTime date;
+	private boolean isCancelled;  // 취소 여부를 관리하는 필드
 
-	public Ticket(Member member, Concert concert, String seatNumber, LocalDateTime date) {
+	public Ticket(Member member, Concert concert, String seatNumber, LocalDateTime date, boolean isCancelled) {
 		this.member = member;
 		this.concert = concert;
 		this.seatNumber = seatNumber;
 		this.date = date;
+		this.isCancelled = false; // 기본적으로 티켓은 취소되지 않은 상태로 시작
+	}
+
+	public void cancel() {
+		if (this.isCancelled) {
+			throw new IllegalStateException("이 티켓은 이미 취소된 상태입니다.");
+		}
+		this.isCancelled = true;  // 취소 상태로 변경
 	}
 }

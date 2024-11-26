@@ -3,6 +3,8 @@ package com.sparta.concurrencycontrolproject.domain.ticket.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,5 +68,25 @@ public class TicketService {
 
 		Ticket ticket = new Ticket(member, concert, seatNumber);
 		return ticketRepository.save(ticket);
+	}
+
+	@Transactional
+	public void deleteTicket(UserDetailsImpl authMember, Long ticketId, Long concertId) {
+		Member member = memberRepository.findById(authMember.getUser().getId())
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 입니다."));
+		Concert concert = concertRepository.findById(concertId)
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 공연 입니다."));
+		Ticket ticket = ticketRepository.findById(ticketId)
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않는 티켓입니다."));
+
+		if (ticket.isCancelled()) {
+			throw new InvalidRequestStateException("이미 취소된 티켓입니다.");
+		}
+		if (!ticket.getMember().equals(member)) {
+			throw new InvalidRequestStateException("로그인한 사용자의 티켓이 아닙니다.");
+		}
+
+		ticket.cancel();
+		ticketRepository.save(ticket);
 	}
 }
