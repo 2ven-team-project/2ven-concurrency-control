@@ -64,4 +64,5 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	) {
 		return ResponseEntity.ok(ticketService.getAllTickets(authMember,page, size));
 	}
+
 }
