@@ -56,4 +56,14 @@ public class Concert extends Timestamped {
         this.date = date;
         this.startAt = startAt;
     }
+
+    public void updateConcert(String concertName, int price, String description, String image, LocalDateTime date, int seating) {
+        this.concertName = concertName;
+        this.price = price;
+        this.description = description;
+        this.image = image;
+        this.date = date;
+        // 좌석 정보 수정은 추가 구현 필요
+    }
+
 }
