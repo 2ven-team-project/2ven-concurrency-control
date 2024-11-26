@@ -1,11 +1,10 @@
 package com.sparta.concurrencycontrolproject.domain.seat.repository;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.sparta.concurrencycontrolproject.domain.seat.entity.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.sparta.concurrencycontrolproject.domain.seat.entity.Seat;
+import java.util.List;
+import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 	Optional<Seat> findByConcertIdAndSeatNumber(Long concertId, String seatNumber);

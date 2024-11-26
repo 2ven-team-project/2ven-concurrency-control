@@ -1,6 +1,7 @@
 package com.sparta.concurrencycontrolproject.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.concurrencycontrolproject.config.JwtUtil;
 import com.sparta.concurrencycontrolproject.domain.auth.dto.SigninRequest;
 import com.sparta.concurrencycontrolproject.domain.member.entity.MemberRole;
 import jakarta.servlet.FilterChain;
@@ -8,7 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import com.sparta.concurrencycontrolproject.config.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -49,9 +49,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        Long userId = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getId();
-        String email = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getEmail();
-        MemberRole role = ((com.sparta.concurrencycontrolproject.security.UserDetailsImpl) authResult.getPrincipal()).getMember().getRole();
+        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getId();
+        String email = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getEmail();
+        MemberRole role = ((UserDetailsImpl) authResult.getPrincipal()).getMember().getRole();
 
         String token = jwtUtil.createToken(userId,email,role);
         response.setHeader("Authorization", token);

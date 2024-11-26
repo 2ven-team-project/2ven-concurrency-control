@@ -1,9 +1,7 @@
 package com.sparta.concurrencycontrolproject.domain.member.controller;
 
-import com.sparta.concurrencycontrolproject.domain.auth.dto.AuthMember;
 import com.sparta.concurrencycontrolproject.domain.member.dto.request.MemberChangePasswordRequest;
 import com.sparta.concurrencycontrolproject.domain.member.dto.request.MemberDeleteRequest;
-import com.sparta.concurrencycontrolproject.domain.member.dto.response.MemberDeleteResponse;
 import com.sparta.concurrencycontrolproject.domain.member.dto.response.MemberResponse;
 import com.sparta.concurrencycontrolproject.domain.member.service.MemberService;
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
@@ -24,12 +22,13 @@ public class MemberController {
     }
 
     @PutMapping("/members")
-    public void changePassword(@AuthenticationPrincipal AuthMember authMember, @RequestBody MemberChangePasswordRequest memberChangePasswordRequest) {
-        memberService.changePassword(authMember.getId(), memberChangePasswordRequest);
+    public void changePassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody MemberChangePasswordRequest memberChangePasswordRequest) {
+        memberService.changePassword(userDetails.getMember().getId(), memberChangePasswordRequest);
     }
 
     @DeleteMapping("/members/{memberId}")
-    public ResponseEntity<MemberDeleteResponse> deleteMember(@RequestBody MemberDeleteRequest memberDeleteRequest, @PathVariable long memberId, @AuthenticationPrincipal UserDetailsImpl authUser) {
-        return ResponseEntity.ok(memberService.deleteMember(memberDeleteRequest, memberId, authUser));
+    public ResponseEntity<String> deleteMember(@RequestBody MemberDeleteRequest memberDeleteRequest, @PathVariable long memberId, @AuthenticationPrincipal UserDetailsImpl authMember) {
+        memberService.deleteMember(memberDeleteRequest, memberId, authMember);
+        return ResponseEntity.ok("탈퇴 성공");
     }
 }

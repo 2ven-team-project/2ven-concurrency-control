@@ -1,24 +1,19 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.SeatSelectionRequest;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketDetailResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
+import com.sparta.concurrencycontrolproject.domain.ticket.service.TicketService;
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.SeatSelectionRequest;
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
-import com.sparta.concurrencycontrolproject.domain.ticket.service.TicketService;
-import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
