@@ -1,5 +1,23 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.service;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
+import com.sparta.concurrencycontrolproject.domain.ticket.lock.util.RedisKeyUtil;
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import com.sun.jdi.request.InvalidRequestStateException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.sparta.concurrencycontrolproject.domain.concert.entity.Concert;
 import com.sparta.concurrencycontrolproject.domain.concert.repository.ConcertRepository;
 import com.sparta.concurrencycontrolproject.domain.member.entity.Member;
@@ -31,6 +49,7 @@ public class TicketService {
 	private final TicketRepository ticketRepository;
 	private final ConcertRepository concertRepository;
 	private final SeatRepository seatRepository;
+	private final RedisTemplate<String, Long> redisTemplate;
 
 	public List<SeatResponse> getAvailableSeats(Long concertId) {
 		List<Seat> seats = seatRepository.findByConcertId(concertId);
@@ -68,8 +87,11 @@ public class TicketService {
 
 		Member member = memberRepository.findByName(userName)
 			.orElseThrow(() -> new IllegalArgumentException("유효하지 않는 유저입니다."));
-		Ticket ticket = new Ticket(member, concert, seat.getSeatNumber(), request.getDate(),false);
+		Ticket ticket = new Ticket(member, concert, seat.getSeatNumber(), request.getDate(), false);
 		ticketRepository.save(ticket);
+
+		String lockKey = RedisKeyUtil.generateSeatLockKey(concertId, request.getSeatNumber());
+		releaseLock(lockKey);
 
 		return new TicketResponse(
 			concert.getConcertName(),
@@ -101,7 +123,7 @@ public class TicketService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<TicketDetailResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
+	public Page<TicketResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		Page<Ticket> tickets = ticketRepository.findByMemberId(authMember, pageable);
@@ -132,4 +154,33 @@ public class TicketService {
 		);
 	}
 
+	//Lock 적용 좌석선택
+	@Transactional
+	public void selectSeatWithLock(Long concertId, String seatNumber, Long memberId) {
+		String lockKey = RedisKeyUtil.generateSeatLockKey(concertId, seatNumber); //CONCERT-123-SEAT-A10 / memberId
+		try {
+			//setIfAbsent 는 성공적으로 Lock 이 설정되었는지 True or False 반환
+			Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, memberId, 10, TimeUnit.MINUTES);
+			if (lockAcquired == null || !lockAcquired) {
+				throw new IllegalArgumentException("다른 유저가 해당 좌석을 예약중입니다.");
+			}
+
+			Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatNumber)
+				.orElseThrow(() -> new IllegalArgumentException("공연 또는 좌석이 유효햐지 않습니다."));
+
+			if (seat.isBooked()) {
+				throw new IllegalArgumentException("좌석이 이미 예약되었습니다.");
+			}
+
+			seat.book(memberId);
+			seatRepository.save(seat);
+		} catch (IllegalArgumentException e) {
+			//lock 을 얻지 못했으면
+			throw new IllegalStateException("좌석을 예약할 수 없습니다. 다른 유저가 이미 예약중입니다.");
+		}
+	}
+
+	private void releaseLock(String lockKey) {
+		redisTemplate.delete(lockKey);
+	}
 }

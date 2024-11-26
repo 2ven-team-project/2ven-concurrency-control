@@ -32,13 +32,21 @@ public class Seat {
 		this.seatNumber = seatNumber;
 	}
 
-	//좌석 예약시
+	//좌석 예약시(redis 미적용)
 	public void book(String userName) {
 		if (isBooked) {
 			throw new IllegalStateException("이미 예약된 좌석입니다.");
 		}
 		this.isBooked = true;
 		this.bookedBy = userName;
+	}
+
+	public void book(Long memberId) {
+		if (isBooked) {
+			throw new IllegalStateException("이미 예약된 좌석입니다.");
+		}
+		this.isBooked = true;
+		this.bookedBy = memberId.toString();
 	}
 
 	//좌석 예약 취소시
