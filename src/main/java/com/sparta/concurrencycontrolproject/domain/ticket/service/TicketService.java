@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketDetailResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 import com.sun.jdi.request.InvalidRequestStateException;
@@ -104,16 +105,35 @@ public class TicketService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<TicketResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
+	public Page<TicketDetailResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		Page<Ticket> tickets = ticketRepository.findByMemberId(authMember, pageable);
 
-		return tickets.map(ticket -> new TicketResponse(
+		return tickets.map(ticket -> new TicketDetailResponse(
+				ticket.getId(),
 				ticket.getConcert().getConcertName(),
 				ticket.getSeatNumber(),
-				ticket.getDate()
+				ticket.getDate(),
+				ticket.isCancelled(),
+				authMember.getMember().getName()
 		));
+	}
+
+	public TicketDetailResponse getTickets(UserDetailsImpl authMember, Long ticketId) {
+		Member member = memberRepository.findById(authMember.getMember().getId())
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자 입니다."));
+		Ticket ticket = ticketRepository.findById(ticketId)
+				.orElseThrow(() -> new IllegalArgumentException("유효하지 않는 티켓입니다."));
+
+		return new TicketDetailResponse(
+				ticket.getId(),
+				ticket.getConcert().getConcertName(),
+				ticket.getSeatNumber(),
+				ticket.getDate(),
+				ticket.isCancelled(),
+				authMember.getMember().getName()
+		);
 	}
 
 }
