@@ -123,7 +123,7 @@ public class TicketService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<TicketResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
+	public Page<TicketDetailResponse> getAllTickets(UserDetailsImpl authMember, int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		Page<Ticket> tickets = ticketRepository.findByMemberId(authMember, pageable);
