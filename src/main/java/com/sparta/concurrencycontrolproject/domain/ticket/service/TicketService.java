@@ -1,31 +1,19 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketDetailResponse;
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
-import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
-import com.sun.jdi.request.InvalidRequestStateException;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.sparta.concurrencycontrolproject.domain.concert.entity.Concert;
 import com.sparta.concurrencycontrolproject.domain.concert.repository.ConcertRepository;
 import com.sparta.concurrencycontrolproject.domain.member.entity.Member;
 import com.sparta.concurrencycontrolproject.domain.member.repository.MemberRepository;
 import com.sparta.concurrencycontrolproject.domain.seat.entity.Seat;
 import com.sparta.concurrencycontrolproject.domain.seat.repository.SeatRepository;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketDetailResponse;
+import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.entity.Ticket;
 import com.sparta.concurrencycontrolproject.domain.ticket.repository.TicketRepository;
-
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
+import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
