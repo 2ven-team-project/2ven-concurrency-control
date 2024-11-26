@@ -1,23 +1,18 @@
 package com.sparta.concurrencycontrolproject.domain.ticket.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.SeatSelectionRequest;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.request.TicketingRequest;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.SeatResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.dto.response.TicketResponse;
 import com.sparta.concurrencycontrolproject.domain.ticket.service.TicketService;
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +31,7 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	@PostMapping("/{concertId}/seats/select")
 	public ResponseEntity<String> selectSeat(@PathVariable Long concertId, @RequestBody SeatSelectionRequest request,
 		@AuthenticationPrincipal UserDetailsImpl authUser) {
-		ticketService.selectSeat(concertId, request.getSeatNumber(), authUser.getUser().getName());
+		ticketService.selectSeat(concertId, request.getSeatNumber(), authUser.getMember().getName());
 		return ResponseEntity.ok("좌석 선택 완료!");
 	}
 
@@ -44,7 +39,7 @@ public class TicketController { //이 컨트롤러에서 예매를 진행함 (Ti
 	@PostMapping("/{concertId}/ticketing")
 	public ResponseEntity<TicketResponse> createTicket(@PathVariable Long concertId, @RequestBody TicketingRequest request,
 		@AuthenticationPrincipal UserDetailsImpl authUser) {
-		TicketResponse ticketResponse = ticketService.createTicket(concertId, request, authUser.getUser().getName());
+		TicketResponse ticketResponse = ticketService.createTicket(concertId, request, authUser.getMember().getName());
 		return ResponseEntity.ok(ticketResponse);
 	}
 

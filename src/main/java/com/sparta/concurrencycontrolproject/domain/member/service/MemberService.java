@@ -2,7 +2,6 @@ package com.sparta.concurrencycontrolproject.domain.member.service;
 
 import com.sparta.concurrencycontrolproject.domain.member.dto.request.MemberChangePasswordRequest;
 import com.sparta.concurrencycontrolproject.domain.member.dto.request.MemberDeleteRequest;
-import com.sparta.concurrencycontrolproject.domain.member.dto.response.MemberDeleteResponse;
 import com.sparta.concurrencycontrolproject.domain.member.dto.response.MemberResponse;
 import com.sparta.concurrencycontrolproject.domain.member.entity.Member;
 import com.sparta.concurrencycontrolproject.domain.member.repository.MemberRepository;
@@ -51,17 +50,15 @@ public class MemberService {
         }
     }
 
-    public MemberDeleteResponse deleteMember(MemberDeleteRequest memberDeleteRequest, Long memberId, UserDetailsImpl authMember) {
-        Member member = memberRepository.findByEmail(authMember.getUser().getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("User not found"));
-        if(!member.getId().equals(memberId) || !authMember.getUser().getId().equals(memberId)) {
-            throw new IllegalArgumentException("User not found");
+    public void deleteMember(MemberDeleteRequest memberDeleteRequest, Long memberId, UserDetailsImpl authMember) {
+        Member member = memberRepository.findByEmail(authMember.getMember().getEmail()).orElseThrow(
+                () -> new IllegalArgumentException("User not found by email"));
+        if(!member.getId().equals(memberId) || !authMember.getMember().getId().equals(memberId)) {
+            throw new IllegalArgumentException("User not found by id");
         }
-        if(!member.getPassword().equals(passwordEncoder.encode(memberDeleteRequest.getPassword()))) {
-            throw new IllegalArgumentException("User not found");
+        if(!passwordEncoder.matches(memberDeleteRequest.getPassword(),member.getPassword())) {
+            throw new IllegalArgumentException("User not found by password");
         }
-        memberRepository.save(member);
-
-        return new MemberDeleteResponse(member.getId());
+        memberRepository.delete(member);
     }
 }

@@ -25,7 +25,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         // 티켓 목록 조회
         List<Ticket> content = queryFactory
                 .selectFrom(ticket)
-                .where(ticket.member.id.eq(authMember.getUser().getId()))
+                .where(ticket.member.id.eq(authMember.getMember().getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -33,7 +33,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
         // 전체 카운트 조회
         long total = queryFactory
                 .selectFrom(ticket)
-                .where(ticket.member.id.eq(authMember.getUser().getId()))
+                .where(ticket.member.id.eq(authMember.getMember().getId()))
                 .fetchCount();
 
         return new PageImpl<>(content, pageable, total);
