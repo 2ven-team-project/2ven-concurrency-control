@@ -15,7 +15,7 @@ public class MemberAdminService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void changeMemberRole(long memberId, MemberRoleChangeRequest memberRoleChangeRequest) {
+    public void changeMemberRole(Long memberId, MemberRoleChangeRequest memberRoleChangeRequest) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("User not found"));
         member.updateRole(MemberRole.of(memberRoleChangeRequest.getRole()));
     }

@@ -15,7 +15,7 @@ public class MemberAdminController {
     private final MemberAdminService memberAdminService;
 
     @PatchMapping("/admin/members/{memberId}")
-    public void changeMemberRole(@PathVariable long memberId, @RequestBody MemberRoleChangeRequest memberRoleChangeRequest) {
+    public void changeMemberRole(@PathVariable Long memberId, @RequestBody MemberRoleChangeRequest memberRoleChangeRequest) {
         memberAdminService.changeMemberRole(memberId, memberRoleChangeRequest);
     }
 }
