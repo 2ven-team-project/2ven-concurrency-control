@@ -58,6 +58,7 @@ public class CouponService {
         return coupons.map(CouponResponseDto::new);
     }
 
+    // lettuce를 이용한 redis lock
     @Transactional
     public CouponResponseDto issueCoupon(Long couponId, UserDetailsImpl authMember) {
 
@@ -106,7 +107,7 @@ public class CouponService {
         }
 
     }
-
+//    // redisson을 이용한 lock
 //    @Transactional
 //    public CouponResponseDto issueCoupon(Long couponId, UserDetailsImpl authMember) {
 //        String lockKey = "coupon:" + couponId; // Unique lock key for the coupon
