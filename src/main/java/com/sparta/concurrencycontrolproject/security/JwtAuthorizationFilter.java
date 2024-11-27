@@ -31,7 +31,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenValue =req.getHeader("Authorization");
+        String tokenValue =jwtUtil.getTokenFromRequest(req);
 
         if (StringUtils.hasText(tokenValue)) {
             tokenValue = jwtUtil.substringToken(tokenValue);
@@ -42,10 +42,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.extractClaims(tokenValue);
+            String email = info.get("email", String.class);
 
             try {
-                setAuthentication((String) info.get("email"));
+                setAuthentication(email);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return;
