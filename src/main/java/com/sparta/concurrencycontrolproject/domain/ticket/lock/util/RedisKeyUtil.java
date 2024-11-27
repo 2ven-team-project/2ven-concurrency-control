@@ -8,6 +8,6 @@ public class RedisKeyUtil {
 
 
     public static String generateCouponLockKey(Long couponId, Long memberId) {
-        return String.format("COUPON-%d-%s", couponId, memberId);
+        return String.format("COUPON-%d-%d", couponId, memberId);
     }
 }
