@@ -63,8 +63,13 @@ public class TicketService {
 
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void selectSeat(Long concertId, String seatNumber, String name) {
-		Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatNumber)
-			.orElseThrow(() -> new IllegalArgumentException("공연 또는 좌석이 유효하지 않습니다."));
+		//좌석 확인
+		List<Seat> seats = seatRepository.findAllByConcertIdAndSeatNumber(concertId, seatNumber);
+		if (seats.size() != 1) {
+			throw new IllegalArgumentException("좌석이 유효하지 않거나 중복된 데이터가 존재합니다.");
+		}
+
+		Seat seat = seats.get(0);
 
 		if (!seat.isBooked()) {
 			// 임의의 지연 추가 (동시성 문제를 유발하기 위함)
@@ -83,8 +88,12 @@ public class TicketService {
 	@Transactional
 	public TicketResponse createTicket(Long concertId, TicketingRequest request, String userName) {
 		//좌석 확인
-		Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, request.getSeatNumber())
-			.orElseThrow(() -> new IllegalArgumentException("좌석 또는 콘서트가 유효하지 않습니다."));
+		List<Seat> seats = seatRepository.findAllByConcertIdAndSeatNumber(concertId, request.getSeatNumber());
+		if (seats.size() != 1) {
+			throw new IllegalArgumentException("좌석이 유효하지 않거나 중복된 데이터가 존재합니다.");
+		}
+
+		Seat seat = seats.get(0);
 
 		Concert concert = concertRepository.findById(concertId)
 			.orElseThrow(() -> new IllegalArgumentException("유효하지 않은 공연 입니다."));
@@ -173,8 +182,13 @@ public class TicketService {
 				throw new IllegalArgumentException("다른 유저가 해당 좌석을 예약중입니다.");
 			}
 
-			Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatNumber)
-				.orElseThrow(() -> new IllegalArgumentException("공연 또는 좌석이 유효햐지 않습니다."));
+			//좌석 확인
+			List<Seat> seats = seatRepository.findAllByConcertIdAndSeatNumber(concertId, seatNumber);
+			if (seats.size() != 1) {
+				throw new IllegalArgumentException("좌석이 유효하지 않거나 중복된 데이터가 존재합니다.");
+			}
+
+			Seat seat = seats.get(0);
 
 			if (seat.isBooked()) {
 				throw new IllegalArgumentException("좌석이 이미 예약되었습니다.");
