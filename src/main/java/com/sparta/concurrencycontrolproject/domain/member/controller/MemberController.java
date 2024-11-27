@@ -17,17 +17,18 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/members/{memberId}")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable long memberId) {
+    public ResponseEntity<MemberResponse> getMember(@PathVariable Long memberId) {
         return ResponseEntity.ok(memberService.getMember(memberId));
     }
 
     @PutMapping("/members")
-    public void changePassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody MemberChangePasswordRequest memberChangePasswordRequest) {
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody MemberChangePasswordRequest memberChangePasswordRequest) {
         memberService.changePassword(userDetails.getMember().getId(), memberChangePasswordRequest);
+        return ResponseEntity.ok("비밀번호 변경이 완료되었습니다.");
     }
 
     @DeleteMapping("/members/{memberId}")
-    public ResponseEntity<String> deleteMember(@RequestBody MemberDeleteRequest memberDeleteRequest, @PathVariable long memberId, @AuthenticationPrincipal UserDetailsImpl authMember) {
+    public ResponseEntity<String> deleteMember(@RequestBody MemberDeleteRequest memberDeleteRequest, @PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImpl authMember) {
         memberService.deleteMember(memberDeleteRequest, memberId, authMember);
         return ResponseEntity.ok("탈퇴 성공");
     }

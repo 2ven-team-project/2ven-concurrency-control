@@ -19,13 +19,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberResponse getMember(long memberId) {
+    public MemberResponse getMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return new MemberResponse(member.getId(), member.getEmail());
     }
 
     @Transactional
-    public void changePassword(long memberId, MemberChangePasswordRequest memberChangePasswordRequest) {
+    public void changePassword(Long memberId, MemberChangePasswordRequest memberChangePasswordRequest) {
         validateNewPassword(memberChangePasswordRequest);
 
         Member member = memberRepository.findById(memberId)
@@ -51,9 +51,8 @@ public class MemberService {
     }
 
     public void deleteMember(MemberDeleteRequest memberDeleteRequest, Long memberId, UserDetailsImpl authMember) {
-        Member member = memberRepository.findByEmail(authMember.getMember().getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("User not found by email"));
-        if(!member.getId().equals(memberId) || !authMember.getMember().getId().equals(memberId)) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(!memberId.equals(authMember.getMember().getId())) {
             throw new IllegalArgumentException("User not found by id");
         }
         if(!passwordEncoder.matches(memberDeleteRequest.getPassword(),member.getPassword())) {
