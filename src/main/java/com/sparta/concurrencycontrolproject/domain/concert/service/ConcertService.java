@@ -12,14 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class ConcertService {
 
     private final ConcertRepository concertRepository;
 
+    // 공연 등록
     public ConcertResponse registerConcert(ConcertRequest request) {
         Concert concert = new Concert(
                 request.getConcertName(),
@@ -45,6 +44,7 @@ public class ConcertService {
         );
     }
 
+    // 공연 수정
     @Transactional
     public ConcertResponse updateConcert(Long concertId, ConcertUpdateRequest request) {
         Concert concert = concertRepository.findById(concertId)
@@ -69,9 +69,28 @@ public class ConcertService {
         );
     }
 
+    // 공연 전체 조회 및 검색
     @Transactional(readOnly = true)
-    public Page<ConcertResponse> getAllConcerts(int page, int size) {
+    public Page<ConcertResponse> getConcerts(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
+
+        // 이름으로 검색이 있는 경우
+        if (name != null && !name.isBlank()) {
+            return concertRepository.findByConcertNameContaining(name, pageable).map(concert ->
+                    new ConcertResponse(
+                            concert.getId(),
+                            concert.getConcertName(),
+                            concert.getPrice(),
+                            concert.getDescription(),
+                            concert.getImage(),
+                            concert.getDate(),
+                            concert.getStartAt(),
+                            concert.getSeats().size()
+                    )
+            );
+        }
+
+        // 전체 조회
         return concertRepository.findAll(pageable).map(concert ->
                 new ConcertResponse(
                         concert.getId(),
