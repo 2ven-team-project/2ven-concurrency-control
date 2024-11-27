@@ -11,15 +11,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/concerts")
+@RequiredArgsConstructor
 public class ConcertController {
 
     private final ConcertService concertService;
-
-    public ConcertController(ConcertService concertService) {
-        this.concertService = concertService;
-    }
 
     @PostMapping
     public ResponseEntity<ConcertResponse> registerConcert(
