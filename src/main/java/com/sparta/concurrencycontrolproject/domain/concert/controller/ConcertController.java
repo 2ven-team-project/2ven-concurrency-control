@@ -47,11 +47,12 @@ public class ConcertController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ConcertResponse>> getAllConcerts(
+    public ResponseEntity<Page<ConcertResponse>> getConcerts(
+            @RequestParam(value = "name", required = false) String name, // 검색 조건
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<ConcertResponse> concertResponses = concertService.getAllConcerts(page, size);
+        Page<ConcertResponse> concertResponses = concertService.getConcerts(name, page, size);
         return ResponseEntity.ok(concertResponses);
     }
 }
