@@ -24,7 +24,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
         setFilterProcessesUrl("/auth/signin");
-
     }
 
     @Override
@@ -56,6 +55,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(userId,email,role);
         response.setHeader("Authorization", token);
         response.setStatus(HttpServletResponse.SC_OK);
+        jwtUtil.addJwtToCookie(token,response);
     }
 
     @Override
