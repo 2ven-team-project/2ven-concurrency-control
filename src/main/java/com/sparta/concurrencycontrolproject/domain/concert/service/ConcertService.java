@@ -37,7 +37,7 @@ public class ConcertService {
                 request.getDate(),
                 request.getStartAt()
         );
-        //요청에 따른 Seat 리스트 생성
+        // 요청에 따른 Seat 리스트 생성
         List<Seat> seats = createSeats(concert, request.getSeatLetterRange(), request.getSeatNumberRange());
         concert.getSeats().addAll(seats);
         Concert savedConcert = concertRepository.save(concert);
@@ -57,7 +57,8 @@ public class ConcertService {
     // 공연 수정
     @Transactional
     public ConcertResponse updateConcert(UserDetailsImpl userDetails, Long concertId, ConcertUpdateRequest request) {
-        validateAdminRole(userDetails); // 권한 확인 메서드 호출
+        validateAdminRole(userDetails); // 권한 확인
+
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
 
@@ -70,16 +71,16 @@ public class ConcertService {
                 request.getSeating()
         );
 
-        return new ConcertResponse(
-                concert.getId(),
-                concert.getConcertName(),
-                concert.getPrice(),
-                concert.getDescription(),
-                concert.getImage(),
-                concert.getDate(),
-                concert.getStartAt(),
-                concert.getSeats().size()
-        );
+        return mapToConcertResponse(concert);
+    }
+
+    // 공연 단건 조회
+    @Transactional(readOnly = true)
+    public ConcertResponse getConcertById(Long concertId) {
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
+
+        return mapToConcertResponse(concert);
     }
 
     // 공연 전체 조회 및 검색
@@ -115,7 +116,7 @@ public class ConcertService {
         );
     }
 
-    //편의 메서드
+    // 편의 메서드
     private List<Seat> createSeats(Concert concert, String letterRange, String numberRange) {
         List<Seat> seats = new ArrayList<>();
 
