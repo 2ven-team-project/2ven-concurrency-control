@@ -26,12 +26,11 @@ public class ConcertController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody ConcertRequest request
     ) {
-        if (!userDetails.isAdmin()) {
-            throw new AccessDeniedException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
+
         ConcertResponse response = concertService.registerConcert(request);
         return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("/{concertId}")
     public ResponseEntity<ConcertResponse> updateConcert(
