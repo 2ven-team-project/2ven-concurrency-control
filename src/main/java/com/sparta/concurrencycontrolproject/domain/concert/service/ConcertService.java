@@ -35,10 +35,13 @@ public class ConcertService {
                 request.getDate(),
                 request.getStartAt()
         );
+
         for (int i = 1; i <= request.getSeating(); i++) {
             concert.addSeat("S" + i);
         }
+
         Concert savedConcert = concertRepository.save(concert);
+
         return new ConcertResponse(
                 savedConcert.getId(),
                 savedConcert.getConcertName(),
@@ -61,6 +64,7 @@ public class ConcertService {
 
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
+
         concert.updateConcert(
                 request.getConcertName(),
                 request.getPrice(),
@@ -69,6 +73,7 @@ public class ConcertService {
                 request.getDate(),
                 request.getSeating()
         );
+
         return new ConcertResponse(
                 concert.getId(),
                 concert.getConcertName(),
@@ -86,7 +91,6 @@ public class ConcertService {
     public Page<ConcertResponse> getConcerts(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // 이름으로 검색이 있는 경우
         if (name != null && !name.isBlank()) {
             return concertRepository.findByConcertNameContaining(name, pageable).map(concert ->
                     new ConcertResponse(
@@ -102,7 +106,6 @@ public class ConcertService {
             );
         }
 
-        // 전체 조회
         return concertRepository.findAll(pageable).map(concert ->
                 new ConcertResponse(
                         concert.getId(),
