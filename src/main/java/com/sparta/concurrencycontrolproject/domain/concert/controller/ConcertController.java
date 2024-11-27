@@ -7,7 +7,6 @@ import com.sparta.concurrencycontrolproject.domain.concert.service.ConcertServic
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +25,10 @@ public class ConcertController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody ConcertRequest request
     ) {
-
-        ConcertResponse response = concertService.registerConcert(request);
+        // 권한 확인은 서비스에서 처리
+        ConcertResponse response = concertService.registerConcert(userDetails, request);
         return ResponseEntity.ok(response);
     }
-
 
     @PutMapping("/{concertId}")
     public ResponseEntity<ConcertResponse> updateConcert(
@@ -38,10 +36,8 @@ public class ConcertController {
             @PathVariable Long concertId,
             @RequestBody ConcertUpdateRequest request
     ) {
-        if (!userDetails.isAdmin()) {
-            throw new AccessDeniedException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
-        ConcertResponse response = concertService.updateConcert(concertId, request);
+        // 권한 확인은 서비스에서 처리
+        ConcertResponse response = concertService.updateConcert(userDetails, concertId, request);
         return ResponseEntity.ok(response);
     }
 

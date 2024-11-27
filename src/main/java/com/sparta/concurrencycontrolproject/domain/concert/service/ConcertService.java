@@ -5,6 +5,7 @@ import com.sparta.concurrencycontrolproject.domain.concert.dto.ConcertResponse;
 import com.sparta.concurrencycontrolproject.domain.concert.dto.ConcertUpdateRequest;
 import com.sparta.concurrencycontrolproject.domain.concert.entity.Concert;
 import com.sparta.concurrencycontrolproject.domain.concert.repository.ConcertRepository;
+import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,13 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
 
     // 공연 등록
-    public ConcertResponse registerConcert(ConcertRequest request) {
+    @Transactional
+    public ConcertResponse registerConcert(UserDetailsImpl userDetails, ConcertRequest request) {
+        // 권한 확인
+        if (!userDetails.isAdmin()) {
+            throw new IllegalArgumentException("해당 작업은 ADMIN 권한이 필요합니다.");
+        }
+
         Concert concert = new Concert(
                 request.getConcertName(),
                 request.getPrice(),
@@ -46,7 +53,12 @@ public class ConcertService {
 
     // 공연 수정
     @Transactional
-    public ConcertResponse updateConcert(Long concertId, ConcertUpdateRequest request) {
+    public ConcertResponse updateConcert(UserDetailsImpl userDetails, Long concertId, ConcertUpdateRequest request) {
+        // 권한 확인
+        if (!userDetails.isAdmin()) {
+            throw new IllegalArgumentException("해당 작업은 ADMIN 권한이 필요합니다.");
+        }
+
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
         concert.updateConcert(
