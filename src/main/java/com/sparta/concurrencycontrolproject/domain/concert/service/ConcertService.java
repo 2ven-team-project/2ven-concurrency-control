@@ -6,10 +6,13 @@ import com.sparta.concurrencycontrolproject.domain.concert.dto.ConcertUpdateRequ
 import com.sparta.concurrencycontrolproject.domain.concert.entity.Concert;
 import com.sparta.concurrencycontrolproject.domain.concert.repository.ConcertRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +20,6 @@ public class ConcertService {
 
     private final ConcertRepository concertRepository;
 
-    // 공연 등록
     public ConcertResponse registerConcert(ConcertRequest request) {
         Concert concert = new Concert(
                 request.getConcertName(),
@@ -27,13 +29,10 @@ public class ConcertService {
                 request.getDate(),
                 request.getStartAt()
         );
-
         for (int i = 1; i <= request.getSeating(); i++) {
             concert.addSeat("S" + i);
         }
-
         Concert savedConcert = concertRepository.save(concert);
-
         return new ConcertResponse(
                 savedConcert.getId(),
                 savedConcert.getConcertName(),
@@ -46,12 +45,10 @@ public class ConcertService {
         );
     }
 
-    // 공연 수정
     @Transactional
     public ConcertResponse updateConcert(Long concertId, ConcertUpdateRequest request) {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
-
         concert.updateConcert(
                 request.getConcertName(),
                 request.getPrice(),
@@ -60,7 +57,6 @@ public class ConcertService {
                 request.getDate(),
                 request.getSeating()
         );
-
         return new ConcertResponse(
                 concert.getId(),
                 concert.getConcertName(),
@@ -73,13 +69,11 @@ public class ConcertService {
         );
     }
 
-    // 공연 전체 조회
     @Transactional(readOnly = true)
-    public List<ConcertResponse> getAllConcerts() {
-        List<Concert> concerts = concertRepository.findAll();
-
-        return concerts.stream()
-                .map(concert -> new ConcertResponse(
+    public Page<ConcertResponse> getAllConcerts(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return concertRepository.findAll(pageable).map(concert ->
+                new ConcertResponse(
                         concert.getId(),
                         concert.getConcertName(),
                         concert.getPrice(),
@@ -87,8 +81,8 @@ public class ConcertService {
                         concert.getImage(),
                         concert.getDate(),
                         concert.getStartAt(),
-                        concert.getSeats().size() // 좌석 개수 반환
-                ))
-                .toList();
+                        concert.getSeats().size()
+                )
+        );
     }
 }
