@@ -34,12 +34,7 @@ public class Concert extends Timestamped {
 	@OneToMany(mappedBy = "concert", cascade = CascadeType.ALL)
 	private List<Ticket> tickets = new ArrayList<>();
 
-	public void addSeat(String seatNumber) {
-		Seat seat = new Seat(this, seatNumber);
-	}
-	public void removeSeat(String seatNumber) {
-		seats.removeIf(seat -> seat.getSeatNumber().equals(seatNumber)); //좌석 삭제
-	}
+
     public Concert(String concertName, int price, String description, String image,
         LocalDateTime date, LocalDateTime startAt) {
         this.concertName = concertName;
