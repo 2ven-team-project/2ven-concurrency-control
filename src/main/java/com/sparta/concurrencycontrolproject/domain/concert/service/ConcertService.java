@@ -22,10 +22,7 @@ public class ConcertService {
     // 공연 등록
     @Transactional
     public ConcertResponse registerConcert(UserDetailsImpl userDetails, ConcertRequest request) {
-        // 권한 확인
-        if (!userDetails.isAdmin()) {
-            throw new IllegalArgumentException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
+        validateAdminRole(userDetails); // 권한 확인 메서드 호출
 
         Concert concert = new Concert(
                 request.getConcertName(),
@@ -57,10 +54,7 @@ public class ConcertService {
     // 공연 수정
     @Transactional
     public ConcertResponse updateConcert(UserDetailsImpl userDetails, Long concertId, ConcertUpdateRequest request) {
-        // 권한 확인
-        if (!userDetails.isAdmin()) {
-            throw new IllegalArgumentException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
+        validateAdminRole(userDetails); // 권한 확인 메서드 호출
 
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
@@ -92,31 +86,30 @@ public class ConcertService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         if (name != null && !name.isBlank()) {
-            return concertRepository.findByConcertNameContaining(name, pageable).map(concert ->
-                    new ConcertResponse(
-                            concert.getId(),
-                            concert.getConcertName(),
-                            concert.getPrice(),
-                            concert.getDescription(),
-                            concert.getImage(),
-                            concert.getDate(),
-                            concert.getStartAt(),
-                            concert.getSeats().size()
-                    )
-            );
+            return concertRepository.findByConcertNameContaining(name, pageable).map(this::mapToConcertResponse);
         }
 
-        return concertRepository.findAll(pageable).map(concert ->
-                new ConcertResponse(
-                        concert.getId(),
-                        concert.getConcertName(),
-                        concert.getPrice(),
-                        concert.getDescription(),
-                        concert.getImage(),
-                        concert.getDate(),
-                        concert.getStartAt(),
-                        concert.getSeats().size()
-                )
+        return concertRepository.findAll(pageable).map(this::mapToConcertResponse);
+    }
+
+    // 권한 확인 메서드
+    private void validateAdminRole(UserDetailsImpl userDetails) {
+        if (!userDetails.isAdmin()) {
+            throw new IllegalArgumentException("해당 작업은 ADMIN 권한이 필요합니다.");
+        }
+    }
+
+    // Concert -> ConcertResponse 매핑 메서드
+    private ConcertResponse mapToConcertResponse(Concert concert) {
+        return new ConcertResponse(
+                concert.getId(),
+                concert.getConcertName(),
+                concert.getPrice(),
+                concert.getDescription(),
+                concert.getImage(),
+                concert.getDate(),
+                concert.getStartAt(),
+                concert.getSeats().size()
         );
     }
 }

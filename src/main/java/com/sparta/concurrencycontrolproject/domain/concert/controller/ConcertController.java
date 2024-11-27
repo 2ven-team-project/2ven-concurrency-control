@@ -25,7 +25,6 @@ public class ConcertController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody ConcertRequest request
     ) {
-        // 권한 확인은 Service에서 처리
         ConcertResponse response = concertService.registerConcert(userDetails, request);
         return ResponseEntity.ok(response);
     }
@@ -36,7 +35,6 @@ public class ConcertController {
             @PathVariable Long concertId,
             @RequestBody ConcertUpdateRequest request
     ) {
-        // 권한 확인은 Service에서 처리
         ConcertResponse response = concertService.updateConcert(userDetails, concertId, request);
         return ResponseEntity.ok(response);
     }
