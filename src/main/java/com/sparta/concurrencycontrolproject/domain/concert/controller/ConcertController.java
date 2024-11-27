@@ -7,7 +7,6 @@ import com.sparta.concurrencycontrolproject.domain.concert.service.ConcertServic
 import com.sparta.concurrencycontrolproject.security.UserDetailsImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +25,7 @@ public class ConcertController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody ConcertRequest request
     ) {
-        if (!userDetails.isAdmin()) {
-            throw new AccessDeniedException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
-        ConcertResponse response = concertService.registerConcert(request);
+        ConcertResponse response = concertService.registerConcert(userDetails, request);
         return ResponseEntity.ok(response);
     }
 
@@ -39,19 +35,17 @@ public class ConcertController {
             @PathVariable Long concertId,
             @RequestBody ConcertUpdateRequest request
     ) {
-        if (!userDetails.isAdmin()) {
-            throw new AccessDeniedException("해당 작업은 ADMIN 권한이 필요합니다.");
-        }
-        ConcertResponse response = concertService.updateConcert(concertId, request);
+        ConcertResponse response = concertService.updateConcert(userDetails, concertId, request);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<Page<ConcertResponse>> getAllConcerts(
+    public ResponseEntity<Page<ConcertResponse>> getConcerts(
+            @RequestParam(value = "name", required = false) String name, // 검색 조건
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<ConcertResponse> concertResponses = concertService.getAllConcerts(page, size);
+        Page<ConcertResponse> concertResponses = concertService.getConcerts(name, page, size);
         return ResponseEntity.ok(concertResponses);
     }
 }
