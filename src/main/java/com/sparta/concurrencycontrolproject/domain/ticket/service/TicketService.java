@@ -37,6 +37,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -60,16 +61,23 @@ public class TicketService {
 			.collect(Collectors.toList());
 	}
 
-	@Transactional
+	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public void selectSeat(Long concertId, String seatNumber, String name) {
 		Seat seat = seatRepository.findByConcertIdAndSeatNumber(concertId, seatNumber)
 			.orElseThrow(() -> new IllegalArgumentException("공연 또는 좌석이 유효하지 않습니다."));
 
-		if (seat.isBooked()) {
-			throw new IllegalStateException("좌석이 이미 예약되었습니다.");
+		if (!seat.isBooked()) {
+			// 임의의 지연 추가 (동시성 문제를 유발하기 위함)
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			seat.book(name); // 좌석 예약
+			seatRepository.save(seat); // 예약 정보 저장
+		} else {
+			throw new IllegalStateException("이미 예약된 좌석입니다.");
 		}
-		seat.book(name);
-		seatRepository.save(seat);
 	}
 
 	@Transactional
