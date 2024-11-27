@@ -12,5 +12,6 @@ public class ConcertRequest {
     private String image;
     private LocalDateTime date;
     private LocalDateTime startAt;
-    private int seating; // 좌석 수
+    private String seatLetterRange; // A-D
+    private String seatNumberRange; // 1-5
 }

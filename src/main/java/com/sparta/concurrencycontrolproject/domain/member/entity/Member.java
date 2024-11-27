@@ -28,7 +28,7 @@ public class Member extends Timestamped {
 	@Column
 	private String password;
 
-	@Column
+	@Enumerated(EnumType.STRING)
 	private MemberRole role;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
