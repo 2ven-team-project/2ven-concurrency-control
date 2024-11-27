@@ -56,8 +56,7 @@ public class ConcertService {
 
     // 공연 수정
     @Transactional
-    public ConcertResponse updateConcert(UserDetailsImpl userDetails, Long concertId, ConcertUpdateRequest request) {
-        validateAdminRole(userDetails); // 권한 확인 메서드 호출
+    public ConcertResponse updateConcert(Long concertId, ConcertUpdateRequest request) {
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공연입니다."));
 

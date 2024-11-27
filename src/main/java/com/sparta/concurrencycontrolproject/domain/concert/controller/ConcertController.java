@@ -47,4 +47,13 @@ public class ConcertController {
         Page<ConcertResponse> concertResponses = concertService.getConcerts(name, page, size);
         return ResponseEntity.ok(concertResponses);
     }
+    // 공연 단건 조회
+    @GetMapping("/{concertId}")
+    public ResponseEntity<ConcertResponse> getConcert(
+            @PathVariable Long concertId
+    ) {
+        ConcertResponse concertResponse = concertService.getConcertById(concertId);
+        return ResponseEntity.ok(concertResponse);
+    }
+
 }
