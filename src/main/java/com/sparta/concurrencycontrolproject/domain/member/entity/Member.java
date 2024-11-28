@@ -13,13 +13,18 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "members")
+@Table(
+		name = "members",
+		indexes = {
+				@Index(name = "idx_member_email", columnList = "email")
+		}
+)
 public class Member extends Timestamped {
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String email;
 
 	@Column
