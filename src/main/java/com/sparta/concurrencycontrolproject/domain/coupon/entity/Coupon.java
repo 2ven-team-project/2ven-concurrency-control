@@ -1,6 +1,11 @@
 package com.sparta.concurrencycontrolproject.domain.coupon.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +31,6 @@ public class Coupon {
     @Column
     private int discount;
 
-
     @Builder
     public Coupon(String couponName, int count, int discount) {
         this.couponName = couponName;
@@ -34,11 +38,6 @@ public class Coupon {
         this.discount = discount;
     }
 
-    public void update(Coupon coupon) {
-        this.couponName = coupon.getCouponName();
-        this.count = coupon.getCount();
-        this.discount = coupon.getDiscount();
-    }
 
     public void updateCount(int i) {
         this.count = i;
